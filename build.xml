@@ -1,0 +1,72 @@
+<project name="Emeuro" basedir="." default="main">
+
+  <property name="src.dir"     value="src"/>
+  <property name="build.dir"   value="build"/>
+  <property name="classes.dir" value="${build.dir}/classes"/>
+  <property name="jar.dir"     value="${build.dir}/jar"/>
+  <property name="main-class"  value="klg.Main"/>
+  <property name="lib.dir"     value="lib"/>
+
+  <path id="classpath">
+    <!--<fileset dir="${lib.dir}" includes="**/*.jar"/>-->
+    <fileset dir="${lib.dir}">
+      <!-- <include name="commons-io-2.4/commons-io-2.4.jar"/> -->
+      <!-- <include name="Jama-1.0.2.jar"/> -->
+      <!-- <include name="jblas-1.2.0.jar"/> -->
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${classes.dir}"/>
+    <!--<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>-->
+    <!--<javac debug="true" debuglevel="lines,vars,source" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false">-->
+    <!-- <javac debug="true" debuglevel="lines,vars,source" srcdir="${src.dir}" sourcepath="src;lib/textrank/src;lib/libstemmer_java/java" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false"> -->
+    <javac debug="true" debuglevel="lines,vars,source" srcdir="${src.dir}" sourcepath="src" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked"/>
+      <compilerarg value="-Werror"/>
+      <compilerarg value="-Xmaxerrs"/>
+      <compilerarg value="3"/>
+      <include name="klg/Main.java"/>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="${jar.dir}"/>
+    <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+      <manifest>
+	<attribute name="Main-Class" value="${main-class}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!--
+  <target name="jni" depends="compile">
+    <javah force="yes" outputFile="/home/lcmcafee/kunle_research/code/emeuro/src/cpp/include/libemeuronative.h" classpath="${classes.dir}">
+      <class name="law.emeuro.NativeEmeuro"/>
+    </javah>
+  </target>
+  -->
+
+  <!--<target name="run" depends="jar, jni">-->
+  <target name="run" depends="jar">
+    <!--<java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>-->
+    <java fork="true" classname="${main-class}">
+      <!--<sysproperty key="java.library.path" value="${java.library.path}:/home/lcmcafee/kunle_research/code/emeuro/src/cpp/build:/home/lcmcafee/kunle_research/code/emeuro/lib/java/JCuda"/>-->
+      <classpath>
+	<path refid="classpath"/>
+	<path location="${jar.dir}/${ant.project.name}.jar"/>
+      </classpath>
+      <arg value="${filename}"/>
+    </java>
+  </target>
+
+  <target name="clean-build" depends="clean, jar"/>
+
+  <target name="main" depends="clean, run"/>
+
+</project>
+
