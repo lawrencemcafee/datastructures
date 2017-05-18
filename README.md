@@ -7,6 +7,7 @@ This library will contain a near-epic collection of data structures, and tests.
 see also the RELEASE_NOTES.
 
 Reference: https://en.wikipedia.org/wiki/List_of_data_structures
+
 Homepage: http://www.lawrencemcafee.com
 
 INSTALL
